@@ -1,0 +1,8 @@
+flask
+feedparser
+openai
+sqlite3
+smtplib 
+jinja2
+msal
+requests

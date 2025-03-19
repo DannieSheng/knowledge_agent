@@ -1,0 +1,6 @@
+**notebooks/
+*.db
+**.pyc
+**.log
+*.env
+email_sender.py

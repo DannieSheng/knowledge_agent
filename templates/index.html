@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Hot News</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Today's AI Hot News</h1>
+        <div id="news-list">
+            {% for blog in blogs %}
+                <div class="news-item">
+                    <h2><a href="{{ blog.link }}" target="_blank">{{ blog.title }}</a></h2>
+                    <p><strong>Categories:</strong> {{ blog.categories | join(", ") }}</p>
+                    <p><strong>Summary:</strong> {{ blog.summary or "No summary available" }}</p>
+                    <small>Published on: {{ blog.published }}</small>
+                    <hr>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Hot News</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Today's AI Hot News</h1>
+        <div class="news-list">
+            {% for blog in blogs %}
+                <div class="news-item">
+                    <h2><a href="{{ blog.link }}" target="_blank">{{ blog.title }}</a></h2>
+                    <p><strong>Categories:</strong> {{ blog.categories | join(", ") }}</p>
+                    <p><strong>Summary (English):</strong> {{ blog.summary_en }}</p>
+                    <p><strong>Summary (Chinese):</strong> {{ blog.summary_zh }}</p>
+                    <small>Published on: {{ blog.published }}</small>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html> -->
