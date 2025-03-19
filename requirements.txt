@@ -1,8 +1,8 @@
 flask
 feedparser
 openai
-sqlite3
-smtplib 
+pysqlite3
+secure-smtplib 
 jinja2
 msal
 requests
