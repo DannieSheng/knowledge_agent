@@ -30,11 +30,11 @@ def summarize_text_multiple_languages(text):
         ]
     )
     response_zh = client.chat.completions.create(
-    model="gpt-4o-mini",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": f"请用中文总结以下文本：\n{text}"}
-    ]
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": f"请用中文总结以下文本：\n{text}"}
+        ]
     )
     summary_en, summary_zh = response_en.choices[0].message.content, response_zh.choices[0].message.content
     return summary_en, summary_zh
@@ -48,60 +48,6 @@ def filter_relevant_news(entries):
         if "AI" in entry.title or "Artificial Intelligence" in entry.title:
             relevant_news.append(entry)
     return relevant_news
-
-
-def fetch_medium_ai_blogs():
-    rss_url = "https://medium.com/feed/tag/artificial-intelligence"
-    feed = feedparser.parse(rss_url)
-    
-    # 过滤新闻
-    relevant_entries = filter_relevant_news(feed.entries)
-    
-    blogs = []
-    for entry in relevant_entries:
-        summary_en, summary_zh = summarize_text_multiple_languages(entry.summary)  # 对新闻进行摘要
-        blog = {
-            "title": entry.title,
-            "link": entry.link,
-            "summary_en": summary_en,
-            "summary_zh": summary_zh,
-            "published": entry.published
-        }
-        blogs.append(blog)
-    
-    return blogs
-
-
-def fetch_tds_ai_blogs():
-    rss_url = "https://towardsdatascience.com/feed"
-    feed = feedparser.parse(rss_url)
-    
-    # 过滤新闻
-    relevant_entries = filter_relevant_news(feed.entries)
-    
-    blogs = []
-    for entry in relevant_entries:
-        summary_en, summary_zh = summarize_text_multiple_languages(entry.summary)  # 对新闻进行摘要
-        blog = {
-            "title": entry.title,
-            "link": entry.link,
-            "summary_en": summary_en,
-            "summary_zh": summary_zh,
-            "published": entry.published
-        }
-        blogs.append(blog)
-    
-    return blogs
-
-
-def fetch_all_ai_blogs():
-    medium_blogs = fetch_medium_ai_blogs()
-    tds_blogs = fetch_tds_ai_blogs()
-    
-    # 合并两个来源的文章
-    all_blogs = medium_blogs + tds_blogs
-    
-    return all_blogs
 
 
 def categorize_blog(blog):
@@ -120,19 +66,93 @@ def categorize_blog(blog):
     return categories
 
 
+def fetch_blogs(rss_url):
+    feed = feedparser.parse(rss_url)
+    # filter
+    relevant_entries = filter_relevant_news(feed.entries)
+    blogs = []
+    for entry in relevant_entries:
+        summary_en, summary_zh = summarize_text_multiple_languages(entry.summary)  # summarize
+        
+        blog = {
+            "title": entry.title,
+            "link": entry.link,
+            "summary_en": summary_en,
+            "summary_zh": summary_zh,
+            # "categories": categories,
+            "published": entry.published
+            
+        }
+        blog['categories'] = categorize_blog(blog) # categorize
+        blogs.append(blog)
+    return blogs
+
+# def fetch_medium_ai_blogs():
+#     rss_url = "https://medium.com/feed/tag/artificial-intelligence"
+#     feed = feedparser.parse(rss_url)
+    
+#     # 过滤新闻
+#     relevant_entries = filter_relevant_news(feed.entries)
+    
+#     blogs = []
+#     for entry in relevant_entries:
+#         summary_en, summary_zh = summarize_text_multiple_languages(entry.summary)  # 对新闻进行摘要
+#         blog = {
+#             "title": entry.title,
+#             "link": entry.link,
+#             "summary_en": summary_en,
+#             "summary_zh": summary_zh,
+#             "published": entry.published
+#         }
+#         blogs.append(blog)
+    
+#     return blogs
+
+
+# def fetch_tds_ai_blogs():
+#     rss_url = "https://towardsdatascience.com/feed"
+#     feed = feedparser.parse(rss_url)
+    
+#     # 过滤新闻
+#     relevant_entries = filter_relevant_news(feed.entries)
+    
+#     blogs = []
+#     for entry in relevant_entries:
+#         summary_en, summary_zh = summarize_text_multiple_languages(entry.summary)  # 对新闻进行摘要
+#         blog = {
+#             "title": entry.title,
+#             "link": entry.link,
+#             "summary_en": summary_en,
+#             "summary_zh": summary_zh,
+#             "published": entry.published
+#         }
+#         blogs.append(blog)
+    
+#     return blogs
+
+
+def fetch_all_ai_blogs(
+        urls=[
+            "https://medium.com/feed/tag/artificial-intelligence",
+            "https://towardsdatascience.com/feed",
+        ]
+):
+    # medium_blogs = fetch_medium_ai_blogs()
+    # tds_blogs = fetch_tds_ai_blogs()
+    
+    # # 合并两个来源的文章
+    # all_blogs = medium_blogs + tds_blogs
+    all_blogs = []
+    for url in urls:
+        blogs = fetch_blogs(url)
+        all_blogs += blogs
+        
+    return all_blogs
+
+
 def fetch_all_ai_blogs_with_categories():
     all_blogs = fetch_all_ai_blogs()
-    for blog in all_blogs:
-        blog["categories"] = categorize_blog(blog)
-        # Ensure summary is generated
-        if not blog.get("summary"):
-            summary_en, summary_zh = summarize_text_multiple_languages(blog["title"])
-            blog["summary"] = summary_en
-            blog["summary_zh"] = summary_zh
-        
-        # 插入数据库
-        insert_news(blog)
-    
+    print(f"Total number of fetched blogs: {len(all_blogs)}")  # Debugging line    
     return all_blogs
 
 
