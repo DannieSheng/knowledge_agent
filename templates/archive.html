@@ -10,18 +10,15 @@
 <body>
     <div class="container">
         <h1>Archived AI News</h1>
-
+        <!-- Link to the main page -->
+        <a href="{{ url_for('views.home') }}">Back to Main Page</a> <!-- Link to the home page -->
         <div class="news-list">
-            <!-- {% for news_item in news %}
-                <div class="news-item">
-                    <h2><a href="{{ news_item.link }}" target="_blank">{{ news_item.title }}</a></h2>
-                    <p><strong>Categories:</strong> {{ news_item.categories | join(", ") }}</p>
-                    <p><strong>Summary:</strong> {{ news_item.summary_en }}</p> 
-                    <p><strong>摘要:</strong> {{ news_item.summary_zh }}</p> 
-                    <small>Published on: {{ news_item.published }}</small> 
-                    <hr>
-                </div>
-            {% endfor %} -->
+            <!-- JavaScript will populate this with archived news items -->
+        </div>
+        <!-- Pagination Controls -->
+        <div id="pagination-controls">
+            <button id="prev-page" onclick="changePage('prev')">Previous</button>
+            <button id="next-page" onclick="changePage('next')">Next</button>
         </div>
     </div>
 

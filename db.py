@@ -52,3 +52,12 @@ def update_news_feedback(news_id, feedback_type):
     c.execute(f"UPDATE news SET {column} = {column} + 1 WHERE id = ?", (news_id,))
     conn.commit()
     conn.close()
+
+def get_paginated_news(page, per_page):
+    conn = sqlite3.connect('ai_news.db')
+    c = conn.cursor()
+    offset = (page - 1) * per_page
+    c.execute('SELECT * FROM news ORDER BY published DESC LIMIT ? OFFSET ?', (per_page, offset))
+    all_news = c.fetchall()
+    conn.close()
+    return all_news
