@@ -32,8 +32,12 @@ function fetchNews() {
                     <h2><a href="${news.link}" target="_blank">${news.title}</a></h2>
                     <p><strong>Categories:</strong> ${news.categories ? news.categories.join(", ") : "N/A"}</p>
                     <p><strong>Summary:</strong> ${news.summary_en || "No summary available"}</p>
-                    <p><strong>Summary:</strong> ${news.summary_zh || "暂无摘要"}</p>
+                    <p><strong>摘要:</strong> ${news.summary_zh || "暂无摘要"}</p>
                     <small>Published on: ${news.published}</small>
+                    <div>
+                        <button class="like-btn" onclick="likeNews(news.id)">👍</button>
+                        <button class="dislike-btn" onclick="dislikeNews(news.id)">👎</button>
+                    </div>
                     <hr>
                 `;
                 newsContainer.appendChild(item);
@@ -59,7 +63,7 @@ function fetchArchiveNews() {
                     <h2><a href="${news.link}" target="_blank">${news.title}</a></h2>
                     <p><strong>Categories:</strong> ${news.categories ? news.categories.join(", ") : "N/A"}</p>
                     <p><strong>Summary:</strong> ${news.summary_en || "No summary available"}</p>
-                    <p><strong>Summary:</strong> ${news.summary_zh || "暂无摘要"}</p>
+                    <p><strong>摘要:</strong> ${news.summary_zh || "暂无摘要"}</p>
                     <small>Published on: ${news.published}</small>
                     <hr>
                 `;
@@ -67,4 +71,12 @@ function fetchArchiveNews() {
             });
         })
         .catch(error => console.error("Error fetching archive news:", error));
+}
+
+function likeNews(newsId) {
+    fetch(`/like/${newsId}`, { method: 'POST' });
+}
+
+function dislikeNews(newsId) {
+    fetch(`/dislike/${newsId}`, { method: 'POST' });
 }

@@ -14,7 +14,9 @@ def create_db():
         summary_en TEXT,
         summary_zh TEXT,
         categories TEXT,
-        published TEXT  
+        published TEXT,
+        likes INTEGER DEFAULT 0,  -- Add a likes column
+        dislikes INTEGER DEFAULT 0  -- Add a dislikes column
     )
     ''')
     conn.commit()
@@ -25,13 +27,6 @@ def insert_news(blog):
     conn = sqlite3.connect('ai_news.db')
     c = conn.cursor()
 
-    # c.execute('''INSERT INTO news (title, link, summary_en, summary_zh, published) 
-    #              VALUES (?, ?, ?, ?, ?)''', 
-    #           (blog['title'], 
-    #            blog['link'], 
-    #            blog['summary_en'], 
-    #            blog['summary_zh'], #', '.join(blog['categories']), 
-    #            blog['published']))
     c.execute('''
         INSERT INTO news (title, link, summary_en, summary_zh, categories, published)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -49,3 +44,11 @@ def get_all_news():
 
     print(f"Debug: Total number of archived news articles in DB: {len(all_news)}")  # Debugging line
     return all_news
+
+def update_news_feedback(news_id, feedback_type):
+    conn = sqlite3.connect('ai_news.db')
+    c = conn.cursor()
+    column = 'likes' if feedback_type == 'like' else 'dislikes'
+    c.execute(f"UPDATE news SET {column} = {column} + 1 WHERE id = ?", (news_id,))
+    conn.commit()
+    conn.close()

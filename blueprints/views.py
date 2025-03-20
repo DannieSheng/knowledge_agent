@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from db import get_all_news
+from db import get_all_news, update_news_feedback
 import datetime  
 
 views = Blueprint('views', __name__)
@@ -22,3 +22,14 @@ def archive():
     """Render archive page"""
     all_news = get_all_news()
     return render_template('archive.html', news=all_news)
+
+@views.route('/like/<int:news_id>', methods=['POST'])
+def like_news(news_id):
+    update_news_feedback(news_id, 'like')
+    return '', 204
+
+@views.route('/dislike/<int:news_id>', methods=['POST'])
+def dislike_news(news_id):
+    update_news_feedback(news_id, 'dislike')
+    return '', 204
+

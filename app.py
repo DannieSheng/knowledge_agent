@@ -1,5 +1,6 @@
 import os
-from flask import Flask#
+from flask import Flask
+from flask_caching import Cache
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
 from fetch_data import fetch_all_ai_blogs_with_categories
@@ -11,6 +12,7 @@ from config import DevelopmentConfig
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)  # Load development config
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})  # Use simple in-memory cache
 
 # Ensure the database and tables are created
 if not os.path.exists('ai_news.db'): # Only run this in development or if needed
@@ -20,10 +22,10 @@ if not os.path.exists('ai_news.db'): # Only run this in development or if needed
 @app.cli.command("init-db")
 def init_db():
     """Flask CLI command to initialize the database."""
-    create_db()
-    
+    create_db()    
 
 # Function to fetch and store news
+@cache.cached(timeout=86400)  # Cache for 24 hours
 def fetch_and_store_news():
     """Fetch AI news and store in the database."""
     print(f"➡️➡️ Fetching news at {datetime.now()}")
@@ -40,7 +42,7 @@ def fetch_and_store_news():
 
 # Initialize the scheduler
 scheduler = BackgroundScheduler()
-scheduler.add_job(fetch_and_store_news, 'interval', hours=12)  # Fetch news every 24 hours
+scheduler.add_job(fetch_and_store_news, 'interval', hours=24)  # Fetch news every 24 hours
 
 # Start the scheduler
 scheduler.start()
