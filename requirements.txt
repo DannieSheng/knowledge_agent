@@ -6,3 +6,4 @@ secure-smtplib
 jinja2
 msal
 requests
+gunicorn
