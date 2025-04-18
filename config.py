@@ -24,3 +24,10 @@ class ProductionConfig(Config):
     """Configuration for production."""
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")  # Use database from .env
+
+class EmailConfig:
+    CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+    CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+    PROJECT_ID = "ai-news-agent-456908"
+    MAIL_USER = os.getenv("GOOGLE_MAIL_USER")
+    MAIL_PWD = os.getenv("GOOGLE_MAIL_PWD")

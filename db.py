@@ -26,6 +26,7 @@ def insert_news(blog):
     """ 插入新闻到数据库 """
     conn = sqlite3.connect('ai_news.db')
     c = conn.cursor()
+    # print(f"Debug: Inserting blog into DB: {blog}")  # Debugging line
 
     c.execute('''
         INSERT INTO news (title, link, summary_en, summary_zh, categories, published)
@@ -33,17 +34,35 @@ def insert_news(blog):
     ''', (blog['title'], blog['link'], blog['summary_en'],  blog['summary_zh'], ",".join(blog['categories']), blog['published'])) # 
     conn.commit()
     conn.close()
+    print("Debug: Insert completed.")  # Debugging line
+
 
 def get_all_news():
-    """ get all news in history (archived) """
+    """Get all news in history (archived)"""
     conn = sqlite3.connect('ai_news.db')
     c = conn.cursor()
+    
+    print("Debug: Querying all news...")  # Debugging line for querying
     c.execute('SELECT * FROM news ORDER BY published DESC')
     all_news = c.fetchall()
     conn.close()
-
-    print(f"Debug: Total number of archived news articles in DB: {len(all_news)}")  # Debugging line
+    # Check if any news articles were found
+    if not all_news:
+        print("Debug: No news articles found in DB.")
+    else:
+        print(f"Debug: Total number of archived news articles in DB: {len(all_news)}")
     return all_news
+
+# def get_all_news():
+#     """ get all news in history (archived) """
+#     conn = sqlite3.connect('ai_news.db')
+#     c = conn.cursor()
+#     c.execute('SELECT * FROM news ORDER BY published DESC')
+#     all_news = c.fetchall()
+#     conn.close()
+
+#     print(f"Debug: Total number of archived news articles in DB: {len(all_news)}")  # Debugging line
+#     return all_news
 
 def update_news_feedback(news_id, feedback_type):
     conn = sqlite3.connect('ai_news.db')

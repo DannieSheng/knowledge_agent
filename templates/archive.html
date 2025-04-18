@@ -12,7 +12,7 @@
         <h1>Archived AI News</h1>
         <!-- Link to the main page -->
         <a href="{{ url_for('views.home') }}">Back to Main Page</a> <!-- Link to the home page -->
-        <div class="news-list">
+        <div id="archive-list" class="news-list">
             <!-- JavaScript will populate this with archived news items -->
         </div>
         <!-- Pagination Controls -->
@@ -21,7 +21,5 @@
             <button id="next-page" onclick="changePage('next')">Next</button>
         </div>
     </div>
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

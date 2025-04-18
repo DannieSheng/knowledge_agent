@@ -23,7 +23,7 @@ function fetchNews() {
     fetch('/api/news')
         .then(response => response.json())
         .then(data => {
-            console.log("Fetched news:", data);  // ✅ Debugging line
+            console.log("Fetched news:", data);  // ✅ Debugging line TODO: remove
             let newsContainer = document.getElementById("news-list");
             newsContainer.innerHTML = "";  // Clear old content
 
@@ -48,11 +48,21 @@ function fetchNews() {
         .catch(error => console.error("Error fetching news:", error));
 }
 
+function likeNews(newsId) {
+    fetch(`/like/${newsId}`, { method: 'POST' });
+}
+
+function dislikeNews(newsId) {
+    fetch(`/dislike/${newsId}`, { method: 'POST' });
+}
+
 // Fetch archived news for the archive page
 function fetchArchiveNews(page) {
+    console.log(`Fetching archived news for page ${page}`);  // Debugging line
     fetch(`/api/archive?page=${page}`)
         .then(response => response.json())
         .then(data => {
+            console.log("Data received:", data);  // Debugging: print the fetched data
             let archiveContainer = document.getElementById("archive-list");
             archiveContainer.innerHTML = "";  // Clear any existing content
             if (data.length === 0) {
@@ -77,15 +87,6 @@ function fetchArchiveNews(page) {
         })
         .catch(error => console.error("Error fetching archive news:", error));
 }
-
-function likeNews(newsId) {
-    fetch(`/like/${newsId}`, { method: 'POST' });
-}
-
-function dislikeNews(newsId) {
-    fetch(`/dislike/${newsId}`, { method: 'POST' });
-}
-
 
 // Change page when clicking "Previous" or "Next"
 function changePage(direction) {

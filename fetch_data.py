@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 import feedparser
 from openai import OpenAI
 from db import insert_news, create_db
-# from email_sender import send_email, generate_email_body
 from config import DevelopmentConfig  # Import config directly
 
 # Load API key and base URL from config
@@ -66,7 +65,7 @@ def categorize_blog(blog):
     return categories
 
 
-def fetch_blogs(rss_url):
+def fetch_blogs_from_rss(rss_url):
     feed = feedparser.parse(rss_url)
     # filter
     relevant_entries = filter_relevant_news(feed.entries)
@@ -79,13 +78,46 @@ def fetch_blogs(rss_url):
             "link": entry.link,
             "summary_en": summary_en,
             "summary_zh": summary_zh,
-            # "categories": categories,
             "published": entry.published
             
         }
         blog['categories'] = categorize_blog(blog) # categorize
         blogs.append(blog)
     return blogs
+
+
+def fetch_all_ai_blogs(
+        urls_rss=[
+            # "https://medium.com/feed/tag/artificial-intelligence",
+            "https://towardsdatascience.com/feed",
+            # "https://arxiv.org/rss/cs.AI",  # ArXiv AI Research
+            # "https://news.ycombinator.com/rss",  # Hacker News AI section
+            # "https://ai.googleblog.com/atom.xml",  # Google AI Blog
+            # "https://www.technologyreview.com/feed/ai/"  # MIT Technology Review AI section
+        ],
+):
+    print("Fetching blogs...")
+    all_blogs = []
+    for url in urls_rss:
+        blogs = fetch_blogs_from_rss(url)
+        print(f"Debug: Fetched {len(blogs)} blogs from {url}")  # Debugging line
+        all_blogs += blogs
+    print(f"Debug: Total blogs fetched: {len(all_blogs)}")  # Debugging line
+    return all_blogs
+
+
+# def fetch_all_ai_blogs_with_categories():
+#     all_blogs = fetch_all_ai_blogs()
+#     print(f"Total number of fetched blogs: {len(all_blogs)}")  # Debugging line    
+#     return all_blogs
+
+
+# def send_daily_email():
+#     blogs = fetch_all_ai_blogs_with_categories()
+#     email_body = generate_email_content(blogs)
+#     send_email_smtp("hudanyun.sheng@gmail.com", "hudanyun.sheng@outlook.com", "Daily AI News Digest", email_body)
+
+# send_daily_email()
 
 # def fetch_medium_ai_blogs():
 #     rss_url = "https://medium.com/feed/tag/artificial-intelligence"
@@ -129,36 +161,3 @@ def fetch_blogs(rss_url):
 #         blogs.append(blog)
     
 #     return blogs
-
-
-def fetch_all_ai_blogs(
-        urls=[
-            "https://medium.com/feed/tag/artificial-intelligence",
-            "https://towardsdatascience.com/feed",
-        ]
-):
-    # medium_blogs = fetch_medium_ai_blogs()
-    # tds_blogs = fetch_tds_ai_blogs()
-    
-    # # 合并两个来源的文章
-    # all_blogs = medium_blogs + tds_blogs
-    all_blogs = []
-    for url in urls:
-        blogs = fetch_blogs(url)
-        all_blogs += blogs
-        
-    return all_blogs
-
-
-def fetch_all_ai_blogs_with_categories():
-    all_blogs = fetch_all_ai_blogs()
-    print(f"Total number of fetched blogs: {len(all_blogs)}")  # Debugging line    
-    return all_blogs
-
-
-# def send_daily_email():
-#     blogs = fetch_all_ai_blogs_with_categories()
-#     email_body = generate_email_body(blogs)
-#     send_email("Daily AI News Digest", email_body, "hudanyun.sheng@outlook.com")
-
-# send_daily_email()
